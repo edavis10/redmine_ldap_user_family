@@ -1,3 +1,4 @@
-# English strings go here for Rails i18n
 en:
-  my_label: "My label"
+  ldap_user_family_settings_help: "Select the custom field that stores the identifer used to map the Parent to the Child.  Make sure you enable 'On-the-fly user creation' and map the custom user field in your LDAP authentication."
+  ldap_user_family_family_custom_field_label: "Custom Field"
+  ldap_user_family_missing_custom_field: "Missing a '{{field_format}}' Custom Field for Users.  Please create one first."

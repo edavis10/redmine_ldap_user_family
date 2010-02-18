@@ -1,0 +1,21 @@
+<%
+def custom_field_config(option_name, field_format, current_value)
+  label = content_tag(:label, l("ldap_user_family_#{option_name}_label".to_sym))
+  data = UserCustomField.all(:conditions => {:field_format => field_format})
+  unless data.empty?
+    select = select_tag("settings[#{option_name}]",
+                        content_tag(:option, '') +
+                        options_from_collection_for_select(data, :id, :name, current_value))
+  else
+    select = link_to(l(:ldap_user_family_missing_custom_field, :field_format => field_format.capitalize),
+                     :controller => 'custom_fields', :action => 'index', :tab => 'UserCustomField')
+  end
+  return content_tag(:p, label + select)
+end
+%>
+
+<fieldset>
+  <%= content_tag(:p, l(:ldap_user_family_settings_help)) %>
+
+  <%= custom_field_config('family_custom_field', 'string', @settings['family_custom_field'].to_i) %>
+</fieldset>
