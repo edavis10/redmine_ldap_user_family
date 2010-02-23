@@ -44,12 +44,8 @@ module RedmineLdapUserFamily
 
         def is_parent_or_child?
           if Setting.plugin_redmine_ldap_user_family["family_custom_field"]
-            custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
-
-            if custom_field
-              value = custom_value_for(custom_field).value
-
-              if value
+            if custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
+              if value = custom_value_for(custom_field).value
                 if value.match(User.parent_regexp)
                   return :parent
                 elsif value.match(User.child_regexp)
@@ -61,6 +57,7 @@ module RedmineLdapUserFamily
             end
           end
         end
+        
       end    
     end
   end
