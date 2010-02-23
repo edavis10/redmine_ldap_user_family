@@ -47,6 +47,10 @@ module RedmineLdapUserFamily
             end
           end
         end
+
+        def child?
+          !parent?
+        end
       end    
     end
   end
