@@ -6,7 +6,10 @@ module RedmineLdapUserFamily
         base.send(:include, InstanceMethods)
         base.class_eval do
           unloadable # Send unloadable so it will not be unloaded in development
-          
+
+          class << self
+            alias_method_chain :try_to_login, :auto_add_family
+          end
         end
 
       end
@@ -28,6 +31,29 @@ module RedmineLdapUserFamily
 
         def parent_or_child_regexp
           /\A[\w ]{6}\w{1}[\w|-][\w]{2}\z/i
+        end
+
+        def create_new_user_from_ldap_with_family_id(family_id_match)
+
+        end
+
+        def try_to_login_with_auto_add_family(login, password)
+          user = try_to_login_without_auto_add_family(login, password)
+          if user && user.parent?
+            if user.child.blank?
+              family_id, last_two = *user.convert_to_child(user.get_my_family_value)
+
+              User.create_new_user_from_ldap_with_family_id(family_id)
+            end
+          elsif user && user.child?
+            if user.parent.blank?
+              family_id = user.convert_to_parent(user.get_my_family_value)
+
+              User.create_new_user_from_ldap_with_family_id(family_id)
+            end
+          end
+          
+          user 
         end
       end
       

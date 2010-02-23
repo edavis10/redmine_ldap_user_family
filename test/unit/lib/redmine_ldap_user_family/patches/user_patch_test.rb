@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../../../../test_helper'
 
 class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
-  def generate_parent_user
-    User.generate_with_protected!(:custom_field_values => {@custom_field.id.to_s => 'oneusec-23'})
+  def generate_parent_user(attrs={})
+    User.generate_with_protected!({:custom_field_values => {@custom_field.id.to_s => 'oneusec-23'}}.merge(attrs))
   end
 
-  def generate_child_user
-    User.generate_with_protected!(:custom_field_values => {@custom_field.id.to_s => 'oneusec123'})
+  def generate_child_user(attrs={})
+    User.generate_with_protected!({:custom_field_values => {@custom_field.id.to_s => 'oneusec123'}}.merge(attrs))
   end
 
   context "#parent?" do
@@ -105,6 +105,62 @@ class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
         @child = generate_child_user
 
         assert_equal nil, @child.parent
+      end
+    end
+  end
+
+  context "#try_to_login" do
+    setup do
+      setup_plugin_configuration
+      @test_password = {:password => 'testtesttest', :password_confirmation => 'testtesttest'}
+    end
+    
+    context "user who isn't a parent or child" do
+      should "do nothing" do
+        @user = User.generate_with_protected!(@test_password)
+
+        assert_no_difference('User.count') do
+          assert_equal @user, User.try_to_login(@user.login, 'testtesttest')
+        end
+        
+      end
+    end
+
+    context "user who is a child" do
+      setup do
+        @user = generate_child_user(@test_password)
+      end
+
+      should "check that the parent record exists" do
+        User.any_instance.expects(:parent).returns(nil)
+        assert @user, User.try_to_login(@user.login, 'testtesttest')
+      end
+
+      should "try to auto add the parent record from LDAP" do
+        assert_difference('User.count') do
+          assert_equal @user, User.try_to_login(@user.login, 'testtesttest')
+        end
+
+        assert @user.parent.present?
+      end
+    end
+
+    context "user who is a parent" do
+      setup do
+        @user = generate_parent_user(@test_password)
+      end
+
+      should "check that the child record exists" do
+        User.any_instance.expects(:child).returns(nil)
+        assert @user, User.try_to_login(@user.login, 'testtesttest')
+      end
+
+      should "try to auto add the child record from LDAP" do
+        assert_difference('User.count') do
+          assert_equal @user, User.try_to_login(@user.login, 'testtesttest')
+        end
+
+        assert @user.child.present?
       end
     end
   end
