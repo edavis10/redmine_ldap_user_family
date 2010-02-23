@@ -40,6 +40,54 @@ module RedmineLdapUserFamily
           is_parent_or_child? == :child
         end
 
+        def child
+          return nil unless parent?
+
+          custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
+          my_value = custom_value_for(custom_field).value
+
+          child_value = CustomValue.find(:first,
+                                         :conditions => ["value != :my_value AND value LIKE :family_name AND value like :last_two",
+                                                         {
+                                                           :my_value => my_value,
+                                                           :family_name => family_value_for(:child).first.to_s + '%',
+                                                           :last_two => '%' + family_value_for(:child).last.to_s
+                                                         }])
+          child_value.customized if child_value
+
+        end
+
+        def parent
+          return nil unless child?
+
+          parent_value = CustomValue.find_by_value(family_value_for(:parent))
+          parent_value.customized if parent_value
+
+        end
+
+        def family_value_for(user_type)
+          custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
+          my_value = custom_value_for(custom_field).value
+
+          case user_type
+          when :parent
+            convert_to_parent my_value
+          when :child
+            convert_to_child my_value
+          end
+        end
+
+        def convert_to_child(value)
+          # Can't split on '-' because the first part might include a
+          # hyphenated name
+          [value[0, 7], value[8,2]]
+        end
+
+        def convert_to_parent(value)
+          value[-3,1] = '-'
+          value
+        end
+        
         private
 
         def is_parent_or_child?
@@ -57,7 +105,7 @@ module RedmineLdapUserFamily
             end
           end
         end
-        
+
       end    
     end
   end
