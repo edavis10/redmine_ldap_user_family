@@ -33,23 +33,33 @@ module RedmineLdapUserFamily
       
       module InstanceMethods
         def parent?
-          
-          
+          is_parent_or_child? == :parent
+        end
+
+        def child?
+          is_parent_or_child? == :child
+        end
+
+        private
+
+        def is_parent_or_child?
           if Setting.plugin_redmine_ldap_user_family["family_custom_field"]
             custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
 
             if custom_field
               value = custom_value_for(custom_field).value
 
-              if value && value.match(User.parent_regexp)
-                return true
+              if value
+                if value.match(User.parent_regexp)
+                  return :parent
+                elsif value.match(User.child_regexp)
+                  return :child
+                else
+                  false
+                end
               end
             end
           end
-        end
-
-        def child?
-          !parent?
         end
       end    
     end
