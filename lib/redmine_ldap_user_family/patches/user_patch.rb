@@ -43,15 +43,13 @@ module RedmineLdapUserFamily
         def child
           return nil unless parent?
 
-          custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
-          my_value = custom_value_for(custom_field).value
-
-          family_name, last_two = *convert_to_child(my_value)
+          my_family_value = get_my_family_value
+          family_name, last_two = *convert_to_child(get_my_family_value)
 
           child_value = CustomValue.find(:first,
                                          :conditions => ["value != :my_value AND value LIKE :family_name AND value like :last_two",
                                                          {
-                                                           :my_value => my_value,
+                                                           :my_value => my_family_value,
                                                            :family_name => family_name.to_s + '%',
                                                            :last_two => '%' + last_two.to_s
                                                          }])
@@ -62,12 +60,14 @@ module RedmineLdapUserFamily
         def parent
           return nil unless child?
 
-          custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
-          my_value = custom_value_for(custom_field).value
-
-          parent_value = CustomValue.find_by_value(convert_to_parent(my_value))
+          parent_value = CustomValue.find_by_value(convert_to_parent(get_my_family_value))
           parent_value.customized if parent_value
 
+        end
+
+        def get_my_family_value
+          custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
+          my_value = custom_value_for(custom_field).value
         end
 
         def convert_to_child(value)
