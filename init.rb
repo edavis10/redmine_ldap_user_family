@@ -7,7 +7,14 @@ Dispatcher.to_prepare :redmine_ldap_user_family do
   require_dependency 'principal'
   require_dependency 'user'
 
-  User.send(:include, RedmineLdapUserFamily::Patches::UserPatch)
+  unless User.included_modules.include? RedmineLdapUserFamily::Patches::UserPatch
+    User.send(:include, RedmineLdapUserFamily::Patches::UserPatch)
+  end
+
+  require_dependency 'auth_source'
+  require_dependency 'auth_source_ldap'
+
+  AuthSourceLdap.send(:include, RedmineLdapUserFamily::Patches::AuthSourceLdapPatch)
 end
 
 Redmine::Plugin.register :redmine_ldap_user_family do

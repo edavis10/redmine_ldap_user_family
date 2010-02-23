@@ -22,7 +22,7 @@ class ActiveSupport::TestCase
                                             :onthefly_register => true,
                                             :custom_attributes => {@custom_field.id.to_s => 'employeeNumber'})
     configure_plugin({
-                       'family_custom_field' => @custom_field.id.to_s
+                       'family_custom_field' => @custom_field.id.to_s,
                      })
   end
 end

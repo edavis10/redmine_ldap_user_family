@@ -34,7 +34,21 @@ module RedmineLdapUserFamily
         end
 
         def create_new_user_from_ldap_with_family_id(family_id_match)
+          AuthSourceLdap.all(:conditions => {:onthefly_register => true}).each do |ldap|
+            ldap_user = ldap.find_user_by_family_id(family_id_match)
 
+            if ldap_user
+              user = create(*ldap_user) do |pending_user|
+                pending_user.login = ldap_user.first[:login]
+                pending_user.language = Setting.default_language
+                pending_user.group_ids << ldap.group_ids
+              end
+              if user.valid?
+                logger.debug "redmine_ldap_user_family: Created matching user account #{user.login}" if logger && user
+                break
+              end
+            end
+          end
         end
 
         def try_to_login_with_auto_add_family(login, password)
