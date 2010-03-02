@@ -18,11 +18,15 @@ Dispatcher.to_prepare :redmine_ldap_user_family do
 end
 
 Redmine::Plugin.register :redmine_ldap_user_family do
-  name 'Redmine Ldap User Family plugin'
-  author 'Author name'
-  description 'This is a plugin for Redmine'
-  version '0.0.1'
+  name 'LDAP User Family'
+  author 'Eric Davis'
+  url 'https://projects.littlestreamsoftware.com/projects/redmine-misc'
+  author_url 'http://www.littlestreamsoftware.com'
 
+  description 'LDAP user family is a plugin to associate two records in Redmine using LDAP attributes.'
+
+  version '0.1.0'
+  
   settings({
              :partial => 'settings/ldap_user_family',
              :default => {

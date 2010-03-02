@@ -2,13 +2,17 @@
 
 *This is a custom plugin built for the specific requirements of a client. It is not supported and will not work with the standard Redmine*
 
+LDAP user family is a plugin to associate two records in Redmine using LDAP attributes.
+
 == Features
 
-* __FEATURE__
+* Can define and map a specific LDAP attribute to the student id.
+* Automatically create the parents or child accounts on login
+* Programmable APIs added to user to allow checking if it's a child or parent record based on the student number
 
 == Getting the plugin
 
-A copy of the plugin can be downloaded from {Little Stream Software}[https://projects.littlestreamsoftware.com/projects/___XXX___/files] or from {GitHub}[http://github.com/edavis10/___XXX___]
+A copy of the plugin can be downloaded from {Little Stream Software}[https://projects.littlestreamsoftware.com/projects/redmine-misc/files] or from {GitHub}[http://github.com/edavis10/redmine_ldap_user_family]
 
 
 == Installation and Setup
@@ -16,11 +20,15 @@ A copy of the plugin can be downloaded from {Little Stream Software}[https://pro
 1. Follow the Redmine plugin installation steps at: http://www.redmine.org/wiki/redmine/Plugins 
 2. Run the plugin migrations +rake db:migrate_plugins+
 3. Restart your Redmine web servers (e.g. mongrel, thin, mod_rails)
-4. __XXX__
 
 == Usage
 
-__XXX__
+*This plugin is a custom plugin built for a specific environment with a client. It will not work outside of there.*
+
+1. Create a user custom data field in Redmine with a "text" format
+2. Edit your LDAP connections and associate that custom data field to the LDAP user attribute you are storing the student ids in (I used employeeNumber in testing)
+3. Go to the plugin's configuration panel and select the custom data field you configured
+4. If you try to login as a student, it should also create the parent user account
 
 == License
 
