@@ -83,26 +83,25 @@ module RedmineLdapUserFamily
         def child
           return nil unless parent?
 
-          my_family_value = get_my_family_value
-          family_name, last_two = *convert_to_child(get_my_family_value)
-
           child_value = CustomValue.find(:first,
-                                         :conditions => ["value != :my_value AND value LIKE :family_name AND value like :last_two",
+                                         :conditions => ["value = :value AND customized_type = 'Principal' AND customized_id != :me",
                                                          {
-                                                           :my_value => my_family_value,
-                                                           :family_name => family_name.to_s + '%',
-                                                           :last_two => '%' + last_two.to_s
+                                                           :value => convert_to_child(get_my_family_value),
+                                                           :me => id
                                                          }])
           child_value.customized if child_value
-
         end
 
         def parent
           return nil unless child?
 
-          parent_value = CustomValue.find_by_value(convert_to_parent(get_my_family_value))
+          parent_value = CustomValue.find(:first,
+                                         :conditions => ["value = :value AND customized_type = 'Principal' AND customized_id != :me",
+                                                         {
+                                                           :value => convert_to_parent(get_my_family_value),
+                                                           :me => id
+                                                         }])
           parent_value.customized if parent_value
-
         end
 
         def get_my_family_value
@@ -114,27 +113,25 @@ module RedmineLdapUserFamily
         end
 
         def convert_to_child(value)
-          # Can't split on '-' because the first part might include a
-          # hyphenated name
-          [value[0, 7], value[8,2]]
+          value
         end
 
         def convert_to_parent(value)
-          value[-3,1] = '-'
           value
         end
         
         private
 
         def is_parent_or_child?
-          if value = get_my_family_value
-            if value.match(User.parent_regexp)
-              return :parent
-            elsif value.match(User.child_regexp)
-              return :child
-            else
-              false
-            end
+          case
+          when Setting.plugin_redmine_ldap_user_family["parent_group_id"] &&
+              group_ids.include?(Setting.plugin_redmine_ldap_user_family["parent_group_id"].to_i)
+            return :parent
+          when Setting.plugin_redmine_ldap_user_family["child_group_id"] &&
+              group_ids.include?(Setting.plugin_redmine_ldap_user_family["child_group_id"].to_i)
+            return :child
+          else
+            false
           end
         end
         

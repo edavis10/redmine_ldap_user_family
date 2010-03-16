@@ -2,11 +2,15 @@ require File.dirname(__FILE__) + '/../../../../test_helper'
 
 class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
   def generate_parent_user(attrs={})
-    User.generate_with_protected!({:custom_field_values => {@custom_field.id.to_s => 'oneusec-23'}}.merge(attrs))
+    u = User.generate_with_protected!({:custom_field_values => {@custom_field.id.to_s => 'oneusec123'}}.merge(attrs))
+    @parent_group.users << u
+    u
   end
 
   def generate_child_user(attrs={})
-    User.generate_with_protected!({:custom_field_values => {@custom_field.id.to_s => 'oneusec123'}}.merge(attrs))
+    u = User.generate_with_protected!({:custom_field_values => {@custom_field.id.to_s => 'oneusec123'}}.merge(attrs))
+    @child_group.users << u
+    u
   end
 
   context "#parent?" do
