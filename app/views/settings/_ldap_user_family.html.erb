@@ -15,7 +15,11 @@ end
 %>
 
 <fieldset>
-  <%= content_tag(:p, l(:ldap_user_family_settings_help)) %>
+  <%= content_tag(:p, l(:ldap_user_family_settings_family_custom_field_help)) %>
 
   <%= custom_field_config('family_custom_field', 'string', @settings['family_custom_field'].to_i) %>
+
+  <%= content_tag(:p, l(:ldap_user_family_settings_parent_email_override_help)) %>
+
+  <%= custom_field_config('parent_email_override_field', 'string', @settings['parent_email_override_field'].to_i) %>
 </fieldset>
