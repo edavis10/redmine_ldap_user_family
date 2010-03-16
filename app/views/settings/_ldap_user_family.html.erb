@@ -12,6 +12,19 @@ def custom_field_config(option_name, field_format, current_value)
   end
   return content_tag(:p, label + select)
 end
+
+def group_config(option_name, current_value)
+  label = content_tag(:label, l("ldap_user_family_#{option_name}_label".to_sym))
+  data = Group.all
+  unless data.empty?
+    select = select_tag("settings[#{option_name}]",
+                        content_tag(:option, '') +
+                        options_from_collection_for_select(data, :id, :to_s, current_value))
+  else
+    select = link_to(l(:ldap_user_family_missing_group), :controller => 'groups', :action => 'index')
+  end
+  return content_tag(:p, label + select)
+end
 %>
 
 <fieldset>
@@ -22,4 +35,7 @@ end
   <%= content_tag(:p, l(:ldap_user_family_settings_parent_email_override_help)) %>
 
   <%= custom_field_config('parent_email_override_field', 'string', @settings['parent_email_override_field'].to_i) %>
+
+  <%= group_config('child_group_id', @settings['child_group_id'].to_i) %>
+  <%= group_config('parent_group_id', @settings['parent_group_id'].to_i) %>
 </fieldset>

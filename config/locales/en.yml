@@ -4,3 +4,6 @@ en:
   ldap_user_family_family_custom_field_label: "Custom Field"
   ldap_user_family_parent_email_override_field_label: "Custom Field for alternative email"
   ldap_user_family_missing_custom_field: "Missing a '{{field_format}}' Custom Field for Users.  Please create one first."
+  ldap_user_family_missing_group: "Missing a Group.  Please create one first."
+  ldap_user_family_child_group_id_label: "Child group"
+  ldap_user_family_parent_group_id_label: "Parent group"
