@@ -10,7 +10,11 @@ class ActiveSupport::TestCase
   end
 
   def setup_plugin_configuration
+    @parent_group = Group.generate!(:lastname => 'Parent')
+    @child_group = Group.generate!(:lastname => 'Child')
+    
     @custom_field = UserCustomField.generate!(:name => 'Student Id', :field_format => 'string')
+    @custom_field_alternative_mail = UserCustomField.generate!(:name => 'Alternative Mail', :field_format => 'string')
     @auth_source = AuthSourceLdap.generate!(:name => 'localhost',
                                             :host => '127.0.0.1',
                                             :port => 389,
@@ -20,9 +24,15 @@ class ActiveSupport::TestCase
                                             :attr_lastname => 'sn',
                                             :attr_mail => 'mail',
                                             :onthefly_register => true,
-                                            :custom_attributes => {@custom_field.id.to_s => 'employeeNumber'})
+                                            :custom_attributes => {
+                                              @custom_field.id.to_s => 'employeeNumber',
+                                              @custom_field_alternative_mail.id.to_s => 'mail'
+                                            })
     configure_plugin({
                        'family_custom_field' => @custom_field.id.to_s,
+                       'parent_email_override_field' => @custom_field_alternative_mail.id.to_s,
+                       'child_group_id' => @child_group.id.to_s,
+                       'parent_group_id' => @parent_group.id.to_s
                      })
   end
 end
