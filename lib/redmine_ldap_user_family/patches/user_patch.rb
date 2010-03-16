@@ -15,15 +15,18 @@ module RedmineLdapUserFamily
       end
       
       module ClassMethods
-        def create_new_user_from_ldap_with_family_id(family_id_match)
-          AuthSourceLdap.all(:conditions => {:onthefly_register => true}).each do |ldap|
+        def create_new_user_from_ldap_with_family_id(creating_parent_or_child, family_id_match)
+          group = find_parent_or_child_group(creating_parent_or_child)
+          return nil if group.nil?
+          
+          group.auth_sources.all(:conditions => {:onthefly_register => true}).each do |ldap|
             ldap_user = ldap.find_user_by_family_id(family_id_match)
 
             if ldap_user
               user = create(*ldap_user) do |pending_user|
                 pending_user.login = ldap_user.first[:login]
                 pending_user.language = Setting.default_language
-                pending_user.group_ids << ldap.group_ids
+                pending_user.group_ids = ldap.group_ids
               end
               if user.valid?
                 logger.debug "redmine_ldap_user_family: Created matching user account #{user.login}" if logger && user
@@ -35,17 +38,33 @@ module RedmineLdapUserFamily
 
         def try_to_login_with_auto_add_family(login, password)
           user = try_to_login_without_auto_add_family(login, password)
+
           if user && user.parent?
             if user.child.blank?
-              User.create_new_user_from_ldap_with_family_id(user.get_my_family_value)
+              User.create_new_user_from_ldap_with_family_id(:child, user.get_my_family_value)
             end
           elsif user && user.child?
             if user.parent.blank?
-              User.create_new_user_from_ldap_with_family_id(user.get_my_family_value)
+              User.create_new_user_from_ldap_with_family_id(:parent, user.get_my_family_value)
             end
           end
           
           user 
+        end
+
+        private
+
+        def find_parent_or_child_group(parent_or_child)
+          case parent_or_child
+          when :parent
+            parent_setting = Setting.plugin_redmine_ldap_user_family["parent_group_id"]
+            Group.find_by_id(parent_setting)
+          when :child
+            child_setting = Setting.plugin_redmine_ldap_user_family["child_group_id"]
+            Group.find_by_id(child_setting)
+          else
+            nil
+          end
         end
       end
       

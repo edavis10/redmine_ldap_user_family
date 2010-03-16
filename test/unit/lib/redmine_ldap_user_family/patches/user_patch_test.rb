@@ -142,6 +142,8 @@ class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
         end
 
         assert @user.parent.present?
+        assert @user.parent.parent?
+        assert @user.parent.groups.include?(@parent_group)
       end
     end
 
@@ -161,6 +163,8 @@ class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
         end
 
         assert @user.child.present?
+        assert @user.child.child?
+        assert @user.child.groups.include?(@child_group), @user.child.groups.inspect
       end
     end
   end

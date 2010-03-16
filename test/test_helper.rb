@@ -15,19 +15,35 @@ class ActiveSupport::TestCase
     
     @custom_field = UserCustomField.generate!(:name => 'Student Id', :field_format => 'string')
     @custom_field_alternative_mail = UserCustomField.generate!(:name => 'Alternative Mail', :field_format => 'string')
-    @auth_source = AuthSourceLdap.generate!(:name => 'localhost',
-                                            :host => '127.0.0.1',
-                                            :port => 389,
-                                            :base_dn => 'OU=Person,DC=redmine,DC=org',
-                                            :attr_login => 'uid',
-                                            :attr_firstname => 'givenName',
-                                            :attr_lastname => 'sn',
-                                            :attr_mail => 'mail',
-                                            :onthefly_register => true,
-                                            :custom_attributes => {
-                                              @custom_field.id.to_s => 'employeeNumber',
-                                              @custom_field_alternative_mail.id.to_s => 'mail'
-                                            })
+    @parent_auth_source = AuthSourceLdap.generate!(:name => 'Parent',
+                                                   :host => '127.0.0.1',
+                                                   :port => 389,
+                                                   :base_dn => 'OU=Person,DC=redmine,DC=org',
+                                                   :attr_login => 'uid',
+                                                   :attr_firstname => 'givenName',
+                                                   :attr_lastname => 'sn',
+                                                   :attr_mail => 'mail',
+                                                   :onthefly_register => true,
+                                                   :groups => [@parent_group],
+                                                   :custom_attributes => {
+                                                     @custom_field.id.to_s => 'employeeNumber',
+                                                     @custom_field_alternative_mail.id.to_s => 'mail'
+                                                   })
+
+    @child_auth_source = AuthSourceLdap.generate!(:name => 'Child',
+                                                  :host => '127.0.0.1',
+                                                  :port => 389,
+                                                  :base_dn => 'OU=Person,DC=redmine2,DC=org',
+                                                  :attr_login => 'uid',
+                                                  :attr_firstname => 'givenName',
+                                                  :attr_lastname => 'sn',
+                                                  :attr_mail => 'mail',
+                                                  :onthefly_register => true,
+                                                  :groups => [@child_group],
+                                                  :custom_attributes => {
+                                                    @custom_field.id.to_s => 'employeeNumber',
+                                                    @custom_field_alternative_mail.id.to_s => 'mail'
+                                                  })
     configure_plugin({
                        'family_custom_field' => @custom_field.id.to_s,
                        'parent_email_override_field' => @custom_field_alternative_mail.id.to_s,
