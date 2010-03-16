@@ -39,14 +39,11 @@ module RedmineLdapUserFamily
         def try_to_login_with_auto_add_family(login, password)
           user = try_to_login_without_auto_add_family(login, password)
 
-          if user && user.parent?
-            if user.child.blank?
-              User.create_new_user_from_ldap_with_family_id(:child, user.get_my_family_value)
-            end
-          elsif user && user.child?
-            if user.parent.blank?
-              User.create_new_user_from_ldap_with_family_id(:parent, user.get_my_family_value)
-            end
+          if user && user.parent? && user.child.blank?
+            User.create_new_user_from_ldap_with_family_id(:child, user.get_my_family_value)
+
+          elsif user && user.child? && user.parent.blank?
+            User.create_new_user_from_ldap_with_family_id(:parent, user.get_my_family_value)
           end
           
           user 
