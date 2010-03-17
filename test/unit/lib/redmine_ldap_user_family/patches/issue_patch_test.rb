@@ -5,8 +5,8 @@ class RedmineLdapUserFamily::Patches::IssuePatchTest < ActiveSupport::TestCase
     setup do
       setup_plugin_configuration
       @project = Project.generate!
-      @parent = generate_parent_user
-      @child = generate_child_user
+      @parent = generate_parent_user(:login => 'parent')
+      @child = generate_child_user(:login => 'child')
     end
 
     context "with an issue created by a parent" do
@@ -21,8 +21,20 @@ class RedmineLdapUserFamily::Patches::IssuePatchTest < ActiveSupport::TestCase
       end
 
       context "with a child with an alternative mail" do
-        should "include the child's alternative mail"
-        should "not include the child's mail"
+        setup do
+          @previous_mail = @child.mail
+          @child.custom_field_values = {@custom_field_alternative_mail.id.to_s => 'alt@example.com'}
+          assert @child.save
+          assert_equal 'alt@example.com', @child.custom_value_for(@custom_field_alternative_mail).value
+        end
+
+        should "include the child's alternative mail" do
+          assert @issue.recipients.include?('alt@example.com')
+        end
+        
+        should "not include the child's mail" do
+          assert !@issue.recipients.include?(@previous_mail)
+        end
       end
     end
     
@@ -38,8 +50,20 @@ class RedmineLdapUserFamily::Patches::IssuePatchTest < ActiveSupport::TestCase
       end
 
       context "with a parent with an alternative mail" do
-        should "include the parents's alternative mail"
-        should "not include the parents's mail"
+        setup do
+          @previous_mail = @parent.mail
+          @parent.custom_field_values = {@custom_field_alternative_mail.id.to_s => 'alt@example.com'}
+          assert @parent.save
+          assert_equal 'alt@example.com', @parent.custom_value_for(@custom_field_alternative_mail).value
+        end
+        
+        should "include the parents's alternative mail" do
+          assert @issue.recipients.include?('alt@example.com')
+        end
+        
+        should "not include the parents's mail" do
+          assert !@issue.recipients.include?(@previous_mail)
+        end
       end
     end
 
