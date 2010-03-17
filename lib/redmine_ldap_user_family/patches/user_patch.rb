@@ -84,6 +84,16 @@ module RedmineLdapUserFamily
           find_family_record
         end
 
+        def parent_or_child
+          if parent?
+            child
+          elsif child?
+            parent
+          else
+            nil
+          end
+        end
+
         def get_my_family_value
           if Setting.plugin_redmine_ldap_user_family["family_custom_field"]
             if custom_field = UserCustomField.find_by_id(Setting.plugin_redmine_ldap_user_family["family_custom_field"])
