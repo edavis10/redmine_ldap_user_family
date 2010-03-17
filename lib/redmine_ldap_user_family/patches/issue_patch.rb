@@ -16,6 +16,8 @@ module RedmineLdapUserFamily
                 
                 if custom_value.value.present?
                   r << custom_value.value
+                else
+                  r << author.parent_or_child.mail
                 end
               else
                 r << author.parent_or_child.mail
