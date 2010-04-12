@@ -26,8 +26,9 @@ module RedmineLdapUserFamily
               user = create(*ldap_user) do |pending_user|
                 pending_user.login = ldap_user.first[:login]
                 pending_user.language = Setting.default_language
-                pending_user.group_ids = ldap.group_ids
               end
+              user.group_ids = ldap.group_ids
+
               if user.valid?
                 logger.debug "redmine_ldap_user_family: Created matching user account #{user.login}" if logger && user
                 break
