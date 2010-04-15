@@ -15,8 +15,7 @@ module RedmineLdapUserFamily
           return nil if family_id.blank?
 
           if configured_custom_field_id = Setting.plugin_redmine_ldap_user_family["family_custom_field"]
-            family_id_filter = Net::LDAP::Filter.eq(custom_attributes[configured_custom_field_id],
-                                                    family_id.to_s + '*')
+            family_id_filter = Net::LDAP::Filter.eq(custom_attributes[configured_custom_field_id], family_id)
           end
           return nil if family_id_filter.nil?
 
