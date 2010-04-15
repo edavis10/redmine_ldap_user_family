@@ -4,11 +4,17 @@ module RedmineLdapUserFamily
       def view_account_left_bottom(context={})
         return '' unless context[:user]
 
-        record = context[:user].parent_or_child
+        display_family_relationship(context[:user])
+      end
 
-        if context[:user].parent?
+      private
+
+      def display_family_relationship(user)
+        record = user.parent_or_child
+
+        if user.parent?
           text = l(:ldap_user_family_text_parent_of, :record => record)
-        elsif context[:user].child?
+        elsif user.child?
           text = l(:ldap_user_family_text_child_of, :record => record)
         else
           return ''
@@ -16,7 +22,7 @@ module RedmineLdapUserFamily
 
         return content_tag(:h3, l(:ldap_user_family_text_family_relationship)) +
           content_tag(:p, link_to(text, :controller => 'users', :action => 'show', :id => record))
-        
+
       end
     end
   end
