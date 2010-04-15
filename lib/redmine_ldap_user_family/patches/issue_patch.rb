@@ -4,18 +4,14 @@ module RedmineLdapUserFamily
 
       def self.included(base)
         base.class_eval do
+          # Automatically adds the family member to the recipients,
+          # optionally using their alternative_mail address
           def recipients_with_user_family_included
             r = recipients_without_user_family_included
             mail = nil
             
             if author.parent? || author.child?
-              alternative_mail = Setting.plugin_redmine_ldap_user_family['parent_email_override_field']
-
-              if alternative_mail.present?
-                custom_value = author.parent_or_child.custom_value_for(alternative_mail)
-                mail = custom_value.value if custom_value.value.present?
-              end
-
+              mail = author.parent_or_child.alternative_mail
               mail ||= author.parent_or_child.mail
             end
 
