@@ -20,6 +20,8 @@ Dispatcher.to_prepare :redmine_ldap_user_family do
   Issue.send(:include, RedmineLdapUserFamily::Patches::IssuePatch)
 end
 
+require 'redmine_ldap_user_family/hooks/user_hooks'
+
 Redmine::Plugin.register :redmine_ldap_user_family do
   name 'LDAP User Family'
   author 'Eric Davis'

@@ -7,3 +7,6 @@ en:
   ldap_user_family_missing_group: "Missing a Group.  Please create one first."
   ldap_user_family_child_group_id_label: "Child group"
   ldap_user_family_parent_group_id_label: "Parent group"
+  ldap_user_family_text_parent_of: "Parent of {{record}}"
+  ldap_user_family_text_child_of: "Child of {{record}}"
+  ldap_user_family_text_family_relationship: "Family Relationship"
