@@ -10,3 +10,5 @@ en:
   ldap_user_family_text_parent_of: "Parent of {{record}}"
   ldap_user_family_text_child_of: "Child of {{record}}"
   ldap_user_family_text_family_relationship: "Family Relationship"
+  ldap_user_family_text_alternative_mail: "Alternative Email"
+  ldap_user_family_text_using_alternative_mail: "Using alternative email: {{mail}}"
