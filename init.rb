@@ -4,6 +4,10 @@ require 'redmine'
 require 'dispatcher'
 
 Dispatcher.to_prepare :redmine_ldap_user_family do
+
+  require_dependency 'users_controller'
+  UsersController.send(:include, RedmineLdapUserFamily::Patches::UsersControllerPatch)
+
   require_dependency 'principal'
   require_dependency 'user'
 
