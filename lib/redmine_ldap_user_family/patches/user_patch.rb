@@ -109,7 +109,7 @@ module RedmineLdapUserFamily
 
           if alternative_mail_field.present?
             custom_value = custom_value_for(alternative_mail_field)
-            altmail = custom_value.value if custom_value.value.present?
+            altmail = custom_value.value if custom_value.present? && custom_value.value.present?
           end
 
           altmail
