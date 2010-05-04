@@ -20,12 +20,7 @@ module RedmineLdapUserFamily
             events = Redmine::Activity::Fetcher.new(User.current, :author => @user).events(nil, nil, :limit => 10)
             @events_by_day = events.group_by(&:event_date)
 
-            unless User.current.admin?
-              if !@user.active? || (@user != User.current  && @memberships.empty? && events.empty?)
-                render_404
-                return
-              end
-            end
+            # Removed check for visible users
             render :layout => 'base'
 
           rescue ActiveRecord::RecordNotFound
