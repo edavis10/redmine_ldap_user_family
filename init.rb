@@ -44,4 +44,6 @@ Redmine::Plugin.register :redmine_ldap_user_family do
                'child_group_id' => nil,
                'parent_group_id' => nil
              }})
+
+  requires_redmine :version_or_higher => '0.9.3'
 end

@@ -39,7 +39,8 @@ module RedmineLdapUserFamily
                            :attributes=> search_attributes) do |entry|
             dn = entry.dn
             attrs = get_user_attributes_from_ldap_entry(entry) if onthefly_register?
-            attrs.first[:login] = AuthSourceLdap.get_attr(entry, self.attr_login) if onthefly_register?
+
+            attrs[:login] = AuthSourceLdap.get_attr(entry, self.attr_login) if onthefly_register?
 
           end
 
@@ -47,7 +48,7 @@ module RedmineLdapUserFamily
             return nil
           else
             logger.debug "DN found for parent/child: #{family_id} #{dn}" if logger && logger.debug?
-            return attrs
+            return attrs.except(:dn)
           end
         rescue  Net::LDAP::LdapError => text
           raise "LdapError: " + text

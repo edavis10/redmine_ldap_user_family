@@ -23,8 +23,8 @@ module RedmineLdapUserFamily
             ldap_user = ldap.find_user_by_family_id(family_id_match)
 
             if ldap_user
-              user = create(*ldap_user) do |pending_user|
-                pending_user.login = ldap_user.first[:login]
+              user = create(ldap_user) do |pending_user|
+                pending_user.login = ldap_user[:login]
                 pending_user.language = Setting.default_language
               end
               user.group_ids = ldap.group_ids
