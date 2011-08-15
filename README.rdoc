@@ -10,7 +10,6 @@ LDAP user family is a plugin to associate two records in Redmine using LDAP attr
 * Automatically create the parents or child accounts on login
 * Programmable APIs added to user to allow checking if it's a child or parent record based on the student number
 * Automatically include parent and child on issue emails (forced watchers)
-* Send to alternative email addresses for issue emails (optional)
 
 == Getting the plugin
 
@@ -33,8 +32,6 @@ A copy of the plugin can be downloaded from {Little Stream Software}[https://pro
 4. If you try to login as a student, it should also create the parent user account.  Logging in as the parent will create the student account.
 
 When a parent or student opens an issue, both the parent and student will be included as recipients.
-
-If you define a custom field for an Alternative email (see doc/config.png), then that email address will be used for issue notifications instead of their user email address.
 
 == License
 

@@ -32,10 +32,6 @@ end
 
   <%= custom_field_config('family_custom_field', 'string', @settings['family_custom_field'].to_i) %>
 
-  <%= content_tag(:p, l(:ldap_user_family_settings_parent_email_override_help)) %>
-
-  <%= custom_field_config('parent_email_override_field', 'string', @settings['parent_email_override_field'].to_i) %>
-
   <%= group_config('child_group_id', @settings['child_group_id'].to_i) %>
   <%= group_config('parent_group_id', @settings['parent_group_id'].to_i) %>
 </fieldset>

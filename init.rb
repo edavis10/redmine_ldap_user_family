@@ -40,7 +40,6 @@ Redmine::Plugin.register :redmine_ldap_user_family do
              :partial => 'settings/ldap_user_family',
              :default => {
                'family_custom_field' => nil,
-               'parent_email_override_field' => nil,
                'child_group_id' => nil,
                'parent_group_id' => nil
              }})

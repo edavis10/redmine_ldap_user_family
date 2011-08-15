@@ -14,7 +14,6 @@ class ActiveSupport::TestCase
     @child_group = Group.generate!(:lastname => 'Child')
     
     @custom_field = UserCustomField.generate!(:name => 'Student Id', :field_format => 'string')
-    @custom_field_alternative_mail = UserCustomField.generate!(:name => 'Alternative Mail', :field_format => 'string')
     @parent_auth_source = AuthSourceLdap.generate!(:name => 'Parent',
                                                    :host => '127.0.0.1',
                                                    :port => 389,
@@ -26,8 +25,7 @@ class ActiveSupport::TestCase
                                                    :onthefly_register => true,
                                                    :groups => [@parent_group],
                                                    :custom_attributes => {
-                                                     @custom_field.id.to_s => 'employeeNumber',
-                                                     @custom_field_alternative_mail.id.to_s => 'mail'
+                                                     @custom_field.id.to_s => 'employeeNumber'
                                                    })
 
     @child_auth_source = AuthSourceLdap.generate!(:name => 'Child',
@@ -41,12 +39,10 @@ class ActiveSupport::TestCase
                                                   :onthefly_register => true,
                                                   :groups => [@child_group],
                                                   :custom_attributes => {
-                                                    @custom_field.id.to_s => 'employeeNumber',
-                                                    @custom_field_alternative_mail.id.to_s => 'mail'
+                                                    @custom_field.id.to_s => 'employeeNumber'
                                                   })
     configure_plugin({
                        'family_custom_field' => @custom_field.id.to_s,
-                       'parent_email_override_field' => @custom_field_alternative_mail.id.to_s,
                        'child_group_id' => @child_group.id.to_s,
                        'parent_group_id' => @parent_group.id.to_s
                      })
