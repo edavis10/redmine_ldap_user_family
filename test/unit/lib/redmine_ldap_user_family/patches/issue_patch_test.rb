@@ -16,8 +16,8 @@ class RedmineLdapUserFamily::Patches::IssuePatchTest < ActiveSupport::TestCase
                                  :tracker => @project.trackers.first)
       end
       
-      should "include the child's mail" do
-        assert @issue.recipients.include?(@child.mail)
+      should "not include the child's mail" do
+        assert !@issue.recipients.include?(@child.mail)
       end
 
     end

@@ -74,22 +74,17 @@ module RedmineLdapUserFamily
 
         def child
           return nil unless parent?
-          find_family_record
+          children.try(:first)
+        end
+
+        def children
+          return [] unless parent?
+          find_family_record(:all)
         end
 
         def parent
           return nil unless child?
-          find_family_record
-        end
-
-        def parent_or_child
-          if parent?
-            child
-          elsif child?
-            parent
-          else
-            nil
-          end
+          find_family_record(:first)
         end
 
         def get_my_family_value
@@ -102,15 +97,27 @@ module RedmineLdapUserFamily
 
         private
 
-        def find_family_record
-          family_value = CustomValue.find(:first,
+        def find_family_record(first_or_all=:first)
+          family_value = CustomValue.find(:all,
+                                          :order => "id asc",
                                           :conditions => ["value = :value AND customized_type = 'Principal' AND customized_id != :me",
                                                           {
                                                             :value => get_my_family_value,
                                                             :me => id
                                                           }])
-          family_value.customized if family_value
-
+          if first_or_all == :all
+            if family_value.present?
+              return family_value.collect(&:customized)
+            else
+              return []
+            end
+          else
+            if family_value.present?
+              return family_value.first.customized
+            else
+              return nil
+            end
+          end
         end
         
         def is_parent_or_child?

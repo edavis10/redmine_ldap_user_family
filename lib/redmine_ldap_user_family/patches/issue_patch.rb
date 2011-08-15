@@ -9,8 +9,8 @@ module RedmineLdapUserFamily
             r = recipients_without_user_family_included
             mail = nil
             
-            if author.parent? || author.child?
-              mail = author.parent_or_child.mail
+            if author.child?
+              mail = author.parent.try(:mail)
             end
 
             r << mail if mail.present?

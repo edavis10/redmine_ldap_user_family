@@ -53,7 +53,7 @@ class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
     end
 
     context "on a parent record" do
-      should "return the child record from Redmine" do
+      should "return the first child record from Redmine" do
         @parent = generate_parent_user
         @child = generate_child_user
 
@@ -68,6 +68,36 @@ class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
     end
   end
   
+  context "#children" do
+    setup do
+      setup_plugin_configuration
+    end
+
+    context "on a child record" do
+      should "return an empty array" do
+        @child = generate_child_user
+
+        assert_equal [], @child.children
+      end
+    end
+
+    context "on a parent record" do
+      should "return all of the children from Redmine" do
+        @parent = generate_parent_user
+        @child = generate_child_user
+        @child2 = generate_child_user
+
+        assert_equal [@child, @child2].sort, @parent.children.sort
+      end
+      
+      should "return an empty array if no child record is found" do
+        @parent = generate_parent_user
+
+        assert_equal [], @parent.children
+      end
+    end
+  end
+
   context "#parent" do
     setup do
       setup_plugin_configuration

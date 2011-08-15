@@ -29,7 +29,7 @@ A copy of the plugin can be downloaded from {Little Stream Software}[https://pro
 1. Create a user custom data field in Redmine with a "text" format (see doc/custom_field.png)
 2. Edit your LDAP connections and associate that custom data field to the LDAP user attribute you are storing the student ids in (I used employeeNumber in testing). Also select the correct Redmine Group for that connection. (see doc/ldap1.png and doc/ldap2.png)
 3. Go to the plugin's configuration panel and select the custom data field you configured (see doc/config.png)
-4. If you try to login as a student, it should also create the parent user account.  Logging in as the parent will create the student account.
+4. If you try to login as a student, it should also create the parent user account.  Logging in as the parent will not create the student account.
 
 When a parent or student opens an issue, both the parent and student will be included as recipients.
 
