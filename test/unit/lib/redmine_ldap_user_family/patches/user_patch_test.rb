@@ -140,19 +140,10 @@ class RedmineLdapUserFamily::Patches::UserPatchTest < ActiveSupport::TestCase
         @user = generate_parent_user(@test_password)
       end
 
-      should "check that the child record exists" do
-        User.any_instance.expects(:child).returns(nil)
-        assert @user, User.try_to_login(@user.login, 'testtesttest')
-      end
-
-      should "try to auto add the child record from LDAP" do
-        assert_difference('User.count') do
+      should "not try to auto add the child record from LDAP" do
+        assert_no_difference('User.count') do
           assert_equal @user, User.try_to_login(@user.login, 'testtesttest')
         end
-
-        assert @user.child.present?
-        assert @user.child.child?
-        assert @user.child.groups.include?(@child_group), @user.child.groups.inspect
       end
     end
   end
